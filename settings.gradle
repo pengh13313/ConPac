@@ -1,0 +1,5 @@
+include ':lib-config-annotation'
+include ':lib-config-apt'
+include ':lib-apt-config'
+include ':app'
+rootProject.name = "ConPac"

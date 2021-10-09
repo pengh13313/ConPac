@@ -1,0 +1,29 @@
+apply plugin: CreateJavaPlugin
+def extension = target.extensions.create("PConfig",PConfig)
+class PConfig{
+    String path = ""
+}
+class CreateJavaPlugin implements Plugin<Project> {
+
+    @Override
+    void apply(Project project) {
+        project.afterEvaluate {
+            if (project.plugins.hasPlugin(AppPlugin.class)) {
+                variants = project.android.applicationVariants
+            } else if (project.plugins.hasPlugin(LibraryPlugin.class)) {
+                variants = project.android.libraryVariants
+            } else {
+                return
+            }
+            variants.all { variant ->
+                def task = project.tasks.create("create${variant.name.capitalize()}JavaTask",
+                        CreateJavaTask.class)
+                //注册生成java类的task，指定生成地址，需要和task中写入java的地址一致
+//                    variant.registerJavaGeneratingTask(task,new File(project.buildDir, "generated/source/container"))
+                variant.registerJavaGeneratingTask(task, new File(project.projectDir, "src/main/java"))
+            }
+
+        }
+    }
+
+}
